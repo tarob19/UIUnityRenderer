@@ -34,14 +34,14 @@ public class UIUnityRenderer : UIWidget
 				return null;
 			}
 			if (allowSharedMaterial == false) {
-				if (mMats == null || mMats.Length == 0) {
+				if (CheckMaterial (mMats) == false) {
 					mMats = new Material[cachedRenderer.sharedMaterials.Length];
 					for (int i = 0; i < cachedRenderer.sharedMaterials.Length; i++) {
 						mMats [i] = new Material (cachedRenderer.sharedMaterials [i]);
 						mMats [i].name = mMats [i].name + " (Copy)";
 					}
 				}
-				if (mMats != null && mMats.Length > 0) {
+				if (CheckMaterial (mMats)) {
 					if (Application.isPlaying) {
 						if (cachedRenderer.materials != mMats) {
 							cachedRenderer.materials = mMats;
@@ -66,7 +66,7 @@ public class UIUnityRenderer : UIWidget
 	public override Shader shader {
 		get {
 			if (allowSharedMaterial == false) {
-				if (mMats != null && mMats.Length > 0 && mMats [0] != null) {
+				if (CheckMaterial (mMats)) {
 					return mMats [0].shader;
 				}
 			} else {
@@ -86,10 +86,23 @@ public class UIUnityRenderer : UIWidget
 	/// </summary>
 	private bool ExistSharedMaterial0 ()
 	{
-		if (cachedRenderer != null &&
-		    cachedRenderer.sharedMaterials != null &&
-		    cachedRenderer.sharedMaterials.Length > 0 &&
-		    cachedRenderer.sharedMaterials [0] != null) {
+		if (cachedRenderer != null && CheckMaterial (cachedRenderer.sharedMaterials)) {
+			return true;
+		}
+		return false;
+	}
+
+	/// <summary>
+	/// マテリアルが存在するかチェック
+	/// </summary>
+	private bool CheckMaterial (Material[] mats)
+	{
+		if (mats != null && mats.Length > 0) {
+			for (int i = 0; i < mats.Length; i++) {
+				if (mats [i] == null) {
+					return false;
+				}
+			}
 			return true;
 		}
 		return false;
@@ -111,7 +124,7 @@ public class UIUnityRenderer : UIWidget
 	{
 		base.OnUpdate ();
 		if (allowSharedMaterial == false) {
-			if (mMats != null && mMats.Length > 0 && this.drawCall != null) {
+			if (CheckMaterial (mMats) && this.drawCall != null) {
 				renderQueue = drawCall.finalRenderQueue;
 				for (int i = 0; i < mMats.Length; i++) {
 					if (mMats [i].renderQueue != renderQueue) {
