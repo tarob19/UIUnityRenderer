@@ -108,8 +108,8 @@ public class UIUnityRenderer : UIWidget
 		return false;
 	}
 
-	protected override void OnDisable ()
-	{	
+	void OnDestroy ()
+	{
 		if (mMats != null) {
 			for (int i = 0; i < mMats.Length; i++) {
 				DestroyImmediate (mMats [i]);
@@ -117,7 +117,6 @@ public class UIUnityRenderer : UIWidget
 			}
 			mMats = null;
 		}
-		base.OnDisable ();
 	}
 
 	protected override void OnUpdate ()
